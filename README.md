@@ -24,5 +24,7 @@ New reactions:
    e + H2+ -> 2e + 2H+
 
 The data used in these files are from:
+
 [1] R. K. Janev, D. Reiter, Collision Processes in Low-Temperature Hydrogen Plasmas, Zentralbibliothek Jülich (2003)
+
 [2] R. K. Janev, W. D. Langer, K. Evans Jr, D.E. Post Jr, Elementary Processes In Hydrogen-Helium Plasmas, Springer-Verlag Berlin Heidelberg (1987)

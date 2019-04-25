@@ -1,0 +1,222 @@
+#
+#
+# 
+
+NOUT = 100     # number of output time-steps
+TIMESTEP = 5000.  # time between outputs
+
+MZ = 1     # number of points in z direction (2^n + 1)
+MXG = 0    # No guard cells needed in X
+
+[mesh]
+
+ny = 200    # Resolution along field-line
+
+length = 25        # Length of the domain in meters
+length_xpt = 12.5  # Length from midplane to X-point [m]
+area_expansion = 1 # Expansion factor Area(target) / Area(midplane)
+
+dy = length / ny   # Parallel grid spacing [m]
+
+ypos = y * length / (2*pi) # Y position [m]
+
+nx = 1
+dx = 1
+ixseps1 = -1   # Branch-cut indices, specifying that
+ixseps2 = -1   # the grid is in the SOL
+
+# The following make the field-aligned
+# metric tensor an identity metric
+Rxy = 1
+Bpxy = 1
+Btxy = 0
+Bxy = 1
+hthe = 1
+sinty = 0
+
+symmetricGlobalY = true
+
+##################################################
+# derivative methods
+
+[ddy]
+
+first = C2
+second = C2
+upwind = W3
+
+[solver]
+
+mxstep = 100000  # Maximum number of internal steps per output
+
+atol = 1e-10
+rtol = 1e-5
+
+use_precon=true
+
+[SD1D]
+
+diagnose = true  # Output additional diagnostics
+
+# Normalisation factors
+Nnorm = 1e20  # Reference density [m^-3]
+Tnorm = 100   # Reference temperature [eV]
+Bnorm = 1.0   # Reference magnetic field [T]
+
+# Comma-separated list of species to evolve
+species = h+, h, h2,h2+
+
+# A comma-separated list of reactions to include
+reactions = ionisation, recycling, hydrogen_diss, recombination, hydrogen_dissh ##,ion_h2,ion_m
+
+# Set flux tube area as function of parallel grid index
+# using normalised y coordinate from 0 to 2pi
+area = 1 
+
+heat_conduction = true # Electron heat conduction
+
+##############################################################
+# Options for reactions
+
+[ionisation]
+
+Eionize = 30 # Energy lost per ionisation [eV]
+
+[dissociation]
+Ediss = 0.5 # Bind energy for hydrogen molecule [eV]
+
+[recycling]
+
+vwall = 0.0        # Velocity of neutrals at the wall, as fraction of Franck-Condon energy
+frecycle = 0.2             # Recycling fraction
+fredistribute = 0.0        # Fraction of recycled neutrals redistributed evenly along length
+redist_weight = h(y - pi)  # Weighting for redistribution
+gaspuff = 0        # NOTE: In normalised units
+
+diagnose = true
+
+[fixed_loss_rate]
+name = h            # Losing neutral hydrogen
+loss_rate = 1e3     # Neutral gas loss rate [1/s]
+
+[neutral_diffusion]
+dneut = 10  # Scale neutral gas diffusion rate
+
+##############################################################
+# Hydrogen ions
+
+[h+]
+
+AA = 1  # Atomic mass
+ZZ = 1  # Charge 
+sheath_outflow = true  # Sound speed out at the sheath
+
+sheath_gamma = 6 # Sheath heat transmission
+density_sheath = 0  # 0 = free, 1 = Neumann, 2 = constant nV
+pressure_sheath = 0  # 0 = free, 1 = Neumann, 2 = constant (5/2)Pv + (1/2)nv^3
+
+density_upstream = -1  # Fix upstream density using feedback (<0 = off)
+
+[Nh+] # Ion density
+scale = 1
+
+# Initial conditions
+function = 0.1
+
+flux = 4e23  # Particles per m^2 per second input
+source = (flux/(mesh:length_xpt))*h(mesh:length_xpt - mesh:ypos)  # Particle input source
+                           # as function of normalised y coordinate
+
+[NVh+] # Ion parallel momentum
+scale = 1
+vtarg = 0.3
+function = vtarg * `Nh+:scale` * `Nh+:function` * y / (2*pi)  # Linear from 0 to 0.03 in y
+
+[Ph+] # Ion pressure
+scale = 1
+function = 0.05 # Initial constant pressure
+
+powerflux = 2e7  # Input power flux in W/m^2
+
+source = (powerflux*2/3 / (mesh:length_xpt))*h(mesh:length_xpt - mesh:ypos)  # Input power as function of y
+
+##############################################################
+# Hydrogen atoms
+
+[h]
+
+AA = 1  # Atomic mass
+ZZ = 0  # Charge 
+sheath_outflow = false # Sound speed out at the sheath
+
+sheath_gamma = 0       # Sheath heat transmission
+density_sheath = 0     # 0 = free, 1 = Neumann, 2 = constant nV
+pressure_sheath = 0    # 0 = free, 1 = Neumann, 2 = constant (5/2)Pv + (1/2)nv^3
+
+bndry_flux_fix = true
+
+[Nh]
+# Neutral density
+scale = 1
+function = 1e-4   # Initial flat, low density
+
+[NVh]
+scale = 0.0
+
+[Ph]
+Tstart = 3.5 # Starting temperature in eV
+
+scale = 1.0
+function = Nh:scale * Nh:function * Tstart / SD1D:Tnorm
+
+################################################
+
+[h2]
+
+AA = 2  # Atomic mass
+ZZ = 0  # Charge
+sheath_outflow = false # Sound speed out at the sheath
+
+sheath_gamma = 0       # Sheath heat transmission
+density_sheath = 0     # 0 = free, 1 = Neumann, 2 = constant nV
+pressure_sheath = 0    # 0 = free, 1 = Neumann, 2 = constant (5/2)Pv + (1/2)nv^3
+
+bndry_flux_fix = true
+
+
+#################
+# Hydrogen ions
+
+[h2+]
+
+AA = 2  # Atomic mass
+ZZ = 1  # Charge
+sheath_outflow = true  # Sound speed out at the sheath
+
+sheath_gamma = 6 # Sheath heat transmission
+density_sheath = 0  # 0 = free, 1 = Neumann, 2 = constant nV
+pressure_sheath = 0  # 0 = free, 1 = Neumann, 2 = constant (5/2)Pv + (1/2)nv^3
+
+density_upstream = -1  # Fix upstream density using feedback (<0 = off)
+
+[Nh2+] # Ion density
+scale = 1
+
+# Initial conditions
+function = 0.001
+
+flux = 1.0 ##4e23  # Particles per m^2 per second input
+source = (flux/(mesh:length_xpt))*h(mesh:length_xpt - mesh:ypos)  # Particle input source
+
+[NVh2+] # Ion parallel momentum
+scale = 1
+vtarg = 0.3
+function = vtarg * `Nh2+:scale` * `Nh2+:function` * y / (2*pi)  # Linear from 0 to 0.03 in y
+
+##[Ph2+] # Ion pressure
+##scale = 1
+##function = 0.0  ##0.05 # Initial constant pressure
+
+##powerflux =1.0  ##2e7  # Input power flux in W/m^2
+
+##source = (powerflux*2/3 / (mesh:length_xpt))*h(mesh:length_xpt - mesh:ypos)  # Input power as function of y

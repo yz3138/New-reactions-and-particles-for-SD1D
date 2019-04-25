@@ -11,6 +11,7 @@ New particle species:
 
 New reactions: 
 1. Dissociation ionization rate coefficient (DI); T_min = 3.0eV.
+
    e- + H2 -> e- + e- + H2+ -> H+ + H(1s) + 2e-
 2. Molecules dissociated by collision with atoms (Diss_H_H2); T_min = 3.0eV.
    H(1s) + H2(v) -> H(1s) + 2H(1s)

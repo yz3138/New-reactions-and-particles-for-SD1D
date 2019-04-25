@@ -14,10 +14,13 @@ New reactions:
 
    e- + H2 -> e- + e- + H2+ -> H+ + H(1s) + 2e-
 2. Molecules dissociated by collision with atoms (Diss_H_H2); T_min = 3.0eV.
+
    H(1s) + H2(v) -> H(1s) + 2H(1s)
 3. Molecule ionized by collision with electrons; T_min = 3.0eV.
+
    e + H2 -> 2e + H2+
 4. H2+ ionized by collision with electrons; T_min = 3.0eV
+
    e + H2+ -> 2e + 2H+
 
 The data used in these files are from:

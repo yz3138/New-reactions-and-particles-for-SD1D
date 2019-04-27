@@ -67,7 +67,7 @@ Bnorm = 1.0   # Reference magnetic field [T]
 species = h+, h, h2,h2+
 
 # A comma-separated list of reactions to include
-reactions = ionisation, recycling, hydrogen_diss, recombination, hydrogen_dissh ##,ion_h2,ion_m
+reactions = ionisation, recycling, hydrogen_diss, recombination, hydrogen_dissh, ion_h2,ion_m
 
 # Set flux tube area as function of parallel grid index
 # using normalised y coordinate from 0 to 2pi
@@ -213,10 +213,10 @@ scale = 1
 vtarg = 0.3
 function = vtarg * `Nh2+:scale` * `Nh2+:function` * y / (2*pi)  # Linear from 0 to 0.03 in y
 
-##[Ph2+] # Ion pressure
-##scale = 1
-##function = 0.0  ##0.05 # Initial constant pressure
+[Ph2+] # Ion pressure
+scale = 1
+function = 0.0  ##0.05 # Initial constant pressure
 
-##powerflux =1.0  ##2e7  # Input power flux in W/m^2
+powerflux =0.0  ##2e7  # Input power flux in W/m^2
 
-##source = (powerflux*2/3 / (mesh:length_xpt))*h(mesh:length_xpt - mesh:ypos)  # Input power as function of y
+source = (powerflux*2/3 / (mesh:length_xpt))*h(mesh:length_xpt - mesh:ypos)  # Input power as function of y

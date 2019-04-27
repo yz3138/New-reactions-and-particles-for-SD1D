@@ -524,7 +524,7 @@ BoutReal UpdatedRadiatedPower::Ion_H2(BoutReal T) {
   }
   double Ion_H2_ln_rate,Ion_H2_RateCoefficient,rate_c,TT;
   TT = T;
-  double Ion_H2_coeffs[9]= {-3.56864029E1, 1.73346898E1, -7.76746936, 2.211579405,-4.169840174E-1, 5.088289820e-2, -3.832737518E-3,1.612863120E-4, -2.8933919044E-6};
+  double Ion_H2_coeffs[9]= {-3.56864029E1, 1.73346898E1, -7.76746936, 2.211579405,-4.169840174E-1, 5.088289820e-2, -4.832737518E-3,1.612863120E-4, -2.8933919044E-6};
   Ion_H2_RateCoefficient=0.0;
   for (int i=0;i<=8;i++){
    Ion_H2_RateCoefficient += Ion_H2_coeffs[i]*pow(log(TT),i);

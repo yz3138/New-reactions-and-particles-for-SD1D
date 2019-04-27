@@ -18,7 +18,7 @@ public:
     bool diagnose;
     OPTION(options, diagnose, false);
     if (diagnose) {
-      SAVE_REPEAT4(Riz, Eiz, Fiz, Siz);
+      SAVE_REPEAT4(Riz_1, Eiz_1, Fiz_1, Siz_1);
     }
   }
 
@@ -47,13 +47,13 @@ public:
  
     Coordinates *coord = bout::globals::mesh->getCoordinates();
 
-    Riz = 0.0;
-    Eiz = 0.0;
-    Fiz = 0.0;
-    Siz = 0.0;
+    Riz_1 = 0.0;
+    Eiz_1 = 0.0;
+    Fiz_1 = 0.0;
+    Siz_1 = 0.0;
     
     CELL_AVERAGE(i,                        // Index variable
-                 Riz.getRegion(RGN_NOBNDRY),  // Index and region (input)
+                 Riz_1.getRegion(RGN_NOBNDRY),  // Index and region (input)
                  coord,                    // Coordinate system (input)
                  weight,                   // Quadrature weight variable
                  Ne, Nm, Te, Tm, Vm) {     // Field variables
@@ -62,38 +62,38 @@ public:
         Ne * Nm * hydrogen.Ion_H2(Te*Tnorm) * (Nnorm / Omega_ci);
 
       // Electron energy loss per ionisation
-      Riz[i] += weight * (Eionize / Tnorm) * R;
+      Riz_1[i] += weight * (Eionize / Tnorm) * R;
 
       // Energy from neutral atom temperature
-      Eiz[i] -= weight * (3. / 2) * Tm * R;
+      Eiz_1[i] -= weight * (3. / 2) * Tm * R;
 
       // Friction due to ionisation
-      Fiz[i] -= weight * Vm * R;
+      Fiz_1[i] -= weight * Vm * R;
 
       // Plasma sink due to ionisation (negative)
-      Siz[i] -= weight * R;
+      Siz_1[i] -= weight * R;
     }
   }
   
   SourceMap densitySources() override {
-    return {{"h2+", -Siz},  // Siz < 0 => H2+ source 
-            {"h2", Siz}};   // Siz < 0 => H2 sink
+    return {{"h2+", -Siz_1},  // Siz < 0 => H2+ source 
+            {"h2", Siz_1}};   // Siz < 0 => H2 sink
   }
   SourceMap momentumSources() {
-    return {{"h2+", -Fiz}, // charged molecule momentum source
-            {"h2", Fiz}};  // Neutral molecule momentum sink
+    return {{"h2+", -Fiz_1}, // charged molecule momentum source
+            {"h2", Fiz_1}};  // Neutral molecule momentum sink
   }
   SourceMap energySources() {
-    return {{"h2+", -Eiz}, // Eiz < 0 => Ion energy source
-            {"e", -Riz},  // Electron energy into ionisation
-            {"h2", Eiz}};  // Neutral atom energy sink
+    return {{"h2+", -Eiz_1}, // Eiz < 0 => Ion energy source
+            {"e", -Riz_1},  // Electron energy into ionisation
+            {"h2", Eiz_1}};  // Neutral atom energy sink
   }
   
   std::string str() const { return "molecule ionisation"; }
   
 private:
   UpdatedRadiatedPower hydrogen; // Atomic rates
-  Field3D Riz, Eiz, Fiz, Siz;
+  Field3D Riz_1, Eiz_1, Fiz_1, Siz_1;
 
   BoutReal Eionize;  // Ionisation energy loss [eV]
 };

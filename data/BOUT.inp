@@ -67,7 +67,7 @@ Bnorm = 1.0   # Reference magnetic field [T]
 species = h+, h, h2,h2+
 
 # A comma-separated list of reactions to include
-reactions = ionisation, recycling, hydrogen_diss, recombination, hydrogen_dissh ##,ion_h2,ion_m
+reactions = ionisation, recycling, hydrogen_diss, recombination, hydrogen_dissh,ion_h2,ion_m
 
 # Set flux tube area as function of parallel grid index
 # using normalised y coordinate from 0 to 2pi
